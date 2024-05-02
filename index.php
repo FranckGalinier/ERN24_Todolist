@@ -20,7 +20,7 @@ form(
     './requete/registration.php', //$action
     'Créer un compte', //$title
     'S\'enregistrer', //$button_name
-    'Vous avez déjà un compte', //$text
+    'Vous avez déjà un compte ?', //$text
     './login.php', //$link
     'Connectez-vous'//$button_link
 );
