@@ -68,3 +68,19 @@ function render_my_card($task){
     </div>
   </div>
 <?php }
+
+//méthode qui retourne un message q'il n'y a pas de post
+function no_post(){
+  ?>
+   
+  <div class ="mt-3 d-flex flex-column align-items-center">
+    <div class="alert alert-warning" role="alert">
+      Aucune de vos tâches n'a été trouvé
+    </div>
+    <div>
+      <a href="../add-task.php" class="button">Ajouter une tâche</a>
+    </div>
+  </div>
+
+
+<?php }

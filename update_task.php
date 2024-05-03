@@ -3,6 +3,9 @@
 require_once('./template/_header.php');
 require_once('./template/_navbar.php');
 
+if($_SESSION['id'] != $_GET['user_id']){
+    header('Location: ./task.php');
+}else{
 $title = $_GET['title'];
 $description = $_GET['description'] ?? ''; //si j'ai une description je la garde sinon (??) je mets une chaine vide
 $image = $_GET['image'] ?? '';
@@ -57,17 +60,6 @@ $id = $_GET['id'];
   </div>
 </main>
 
-
-
-
-
-
-
-
-
-
-
-
-
+<?php }
 
 require_once('./template/_footer.php');

@@ -3,8 +3,12 @@
 require_once('./connexion.php');
 require_once('../tools/function.php');
 
-//on récupère l'id de la tâche
-if(isset($_GET['id'])){
+
+if($_SESSION['id'] != $_GET['user_id']){
+  header('Location: ./task.php');
+  }else{
+  //on récupère l'id de la tâche
+  if(isset($_GET['id'])){
   session_start();
   $task_id = intval($_GET['id']);
   $user_id = intval($_SESSION['id']);
@@ -24,3 +28,4 @@ if(isset($_GET['id'])){
   }else{
     header('Location: ../home.php?error=Erreur lors de la suppression de la tâche');
   }
+}

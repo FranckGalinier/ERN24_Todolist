@@ -26,9 +26,8 @@ function get_my_task($user_id){
           //on affiche les données avec la fonction render_my_card qui renvoie des card des tâches
           render_my_card($task);}
           
-
       }else{
-
+        no_post();
       }
     }else{
       var_dump('Erreur lors de l\'execution de get_my_task');
