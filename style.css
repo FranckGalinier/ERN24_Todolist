@@ -1,10 +1,15 @@
-*{
+*{/*reset css*/
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: cursive;
+
 }
 
+body{
+    background-color: #ccc;
+    
+}
 #wrapper{
     align-items: center;
     background-color: #fefefe;
@@ -24,7 +29,7 @@ h2{
     margin-bottom: 40px;
     margin: 10px;
 }
-form{
+form{/*form*/
     background-color: rgb(7, 14, 56);
     border: 3px solid rgb(220, 255, 21);
     border-radius: 20px;
@@ -32,13 +37,13 @@ form{
     width: 60%;
     color: #fefefe;
 }
-.box_button{
+.box_button{/*box button*/
     display: flex;
     align-items: center;
     flex-direction: column;
 }
 
-button{
+button{/*button*/
     align-self: center;
     background-color: #fefefe;
     border: none;
@@ -47,30 +52,30 @@ button{
     margin-right: 10px;
     padding: 10px 15px;
 }
-button:hover{
+button:hover{/*hover effect button*/
     background-color: rgb(236, 253, 0);
     color :rgb(2, 2, 32);
     cursor: pointer;
 }
 
-.sub_text{
+.sub_text{/*sub text*/
     color: #f0e9e9;
     margin-top: 20px;
 
 }
 
-.link{
+.link{/*link*/
     background-color: inherit;
     color: rgb(223, 233, 233);
     text-decoration: none;
 }
-.link:hover{
+.link:hover{/*hover effect link*/
     color:rgb(255, 51, 0);
     text-decoration: underline;
     cursor: pointer;
 }
 
-.error{
+.error{/*error message*/
     background-color: #f2dede;
     color :#ff0000;
     padding: 10px;
@@ -80,12 +85,12 @@ button:hover{
     font-weight: bold;
 }
 
-label{
+label{/*label fields*/
     color: #ccc ;
     font-size: 18px;
     padding: 10px;
 }
-input{
+input{/*input fields*/
     border:2px solid #ccc;
     border-radius: 5px;
     display: block;
@@ -107,11 +112,11 @@ input{
     display: flex;
     align-items: center;
 }
-.navbar-header>*{
+.navbar-header>*{ /*navbar header*/
     padding: 10px;
     color:#ccc
 }
-#navbar a {
+#navbar a {/*navbar links*/
     padding: 10px;
     text-decoration: none;
     color: rgb(7, 14, 56);
@@ -120,12 +125,12 @@ input{
     border-radius: 5px;
     margin-right: 8px;
 }
-#navbar a:hover{
+#navbar a:hover{ /*hover effect*/
     background-color: rgb(7, 14, 56);
     color: #ccc;
     cursor: pointer;
 }
-.navbar-link{
+.navbar-link{/*navbar links*/
     display: flex;
     justify-content: space-between;
     padding: 10px;
@@ -133,4 +138,41 @@ input{
 p{
     font-size: 18px;
     margin-bottom: 5px;
+}
+
+/* card */
+.image-card{
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 2px;
+}
+
+.card_title{
+    color: rgb(56, 13, 7);
+    font-weight: bold;
+    font-size: 32px;
+}
+.text_card{
+    color: rgb(56, 18, 7);
+}
+
+.task_update{
+    color: rgba(218,165,32,1);
+}
+.task_update:hover{
+    color: rgba(218,165,32,1);
+    -ms-transform: scale(1.5); /* IE 9 */
+    -webkit-transform: scale(1.5); /* Safari and Chrome */
+    transform:scale(1.5); /* Standard syntax */
+}
+
+.task_delete{
+    color: rgba(255,0,0,1);
+}
+.task_delete:hover{
+    color: rgba(255,0,0,1);
+    -ms-transform: scale(1.5); /* IE 9 */
+    -webkit-transform: scale(1.5); /* Safari and Chrome */
+    transform:scale(1.5); /* Standard syntax */
 }

@@ -1,97 +1,117 @@
+
 <?php
+
 require_once('./connexion.php');
 require_once('../tools/function.php');
 
-
-
-if(isset($_POST['title']) && isset($_POST['description']) && isset($_POST['deadline'])){ // isset = si la variable existe et n'est pas NULL
-  session_start();
-  //on déclare nos variables
+if (isset($_POST['title']) && isset($_POST['description']) && isset($_POST['deadline'])) { //si tout ces champs sont remplis alors
+  //on déclare les variables
+  session_start();// on démarre la session pour récupérer les infos
   $title = validate($_POST['title']);
   $description = validate($_POST['description']);
-  $deadline_string = validate($_POST['deadline']); //date au format 2024-05-12 10:00:00
-  //on doit transfrome la date en timestamp
-  $deadline = !empty($deadline_string) ? strtotime($deadline_string):0 ;//strtotime = transforme une date en timestamp / si il n'y a pas de date on met 0
-  $user_id = intval($_SESSION['id']); // INTBAL = transforme la valeur en entier
-  $image = $_FILES['image']['name'];
-  var_dump($_FILES);
+  $deadline_string = validate($_POST['deadline']); //format 2024-05-02 10:00:00
+  //on doit transformer la date en timestamp
 
-  //on vérifie que les champs obligatoire sont remplies
-  if(empty($title)){ //si le titre est vide
-    header('Location: ../add-task.php?error=Le titre est obligatoire');
+  $deadline = !empty($deadline_string) ? strtotime($deadline_string) : 0; //strtotime() transforme une date en timestamp
+  $user_id = intval($_SESSION['id']);// intval() transforme une chaine de caractère en entier
+  $image = $_FILES['image']['name'];// on recupère le nom de l'image dans le tableau $_FILES
+  $created_at = time(); //time() retourne le timestamp actuel (date et heure actuelle)
+
+  //on vérifie que les champs obligatoire sont remplis
+  if (empty($title)) {
+    header('Location: ../add-task.php?error=Veuillez renseigner un titre');
     exit();
-
-  }else{
-    global $connexion;
-    //on regarde si l'image n'est pas vide
-    if(!empty($image)){
+  } else {
+    global $connexion; // on se connecte à la base de données
+    //on regarde si $image n'est pas empty
+    if (!empty($image)) {
       //on a upload une image on fait le traitement
-      $format =$_FILES['image']['type'];
-      $tmp_name = $_FILES['image']['tmp_name'];// chemin temporaire ou se trouve mon fichier physique
-      $dir_name = '../images/';//chemin qui va contenir mon fichier
-
-      //on vérifie que l'image est du bon format
-      if($format != 'image/jpeg' && $format != 'image/png' && $format != 'image/gif' && $format != 'image/jpg' && $format != 'image/webp'){
-        header('Location: ../add-task.php?error=Veuillez poster une image au format jpeg, jpg, png, gif ou webp');
-        exit();
-
-      }else{//l'image est au bon format
-        //on peut faire le traitement de l'image
+      //on verifie que l'image est du bon format
+      $format = $_FILES['image']['type'];// on recupère le format de l'image
+      $tmp_name = $_FILES['image']['tmp_name']; //chemin temporaire ou se trouve mon fichier "physique"
+      $dir_name = '../images/'; //chemin ou je veux que mon fichier soit déplacé
+      if (
+        $format !== 'image/jpeg' &&//si le format n'est pas en jpeg et
+        $format !== 'image/png' &&//en png et
+        $format !== 'image/jpg' &&//en jpg et
+        $format !== 'image/gif' &&//en gif et
+        $format !== 'image/webp'//en webp
+      ) {
+        header('Location: ../add-task.php?error=Format d\'image non conforme (jpeg, png, jpg, gif ou webp)');
+        exit();// on affiche un message d'erreur et on sort
+      } else {
+        //on peut faire le traitement de l'image car les formats sont bons
         //on crée un nom unique pour l'image
-        $image_name = uniqid().'_'.$image;
+        $image_name = uniqid() . '_' . $image; // uniqid() génère un id unique concaténé avec le nom de l'image
         //on déplace l'image dans le dossier images
-        if(move_uploaded_file($tmp_name, $dir_name.$image_name)){
-          //on créer la requête
-          $query = "INSERT INTO `task` (title, description, deadline, image, user_id) VALUES (?, ?, ?, ?, ?)";
-          //on prépare la requête
-          if($stmt = mysqli_prepare($connexion,$query)){
+        if (move_uploaded_file($tmp_name, $dir_name . $image_name)) {
+          //on crée la requete
+          $query = "INSERT INTO `task`(title, description, deadline, image, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+          //on prépare la requete
+          if ($stmt = mysqli_prepare($connexion, $query)) {
             //on bind les paramètres
-            mysqli_stmt_bind_param($stmt, "ssisi", $title, $description, $deadline, $image_name, $user_id);
-            // on execute la requête
-            if(mysqli_stmt_execute($stmt)){
-              // on ferme la connexion
-              header('Location: ../home.php?success=Votre tâche a été ajoutée avec succès');
-              exit();
-            }else{
-              header('Location: ../add-task.php?error=Erreur de requête');
-              exit();
-            } 
+            mysqli_stmt_bind_param(
+              $stmt,
+              "ssisii",
+              $title,
+              $description,
+              $deadline,
+              $image_name,
+              $user_id,
+              $created_at
+            );
 
-          }else{
-            header('Location: ../add-task.php?error=Erreur de requête avec image');
+            //on execute la requete
+            if (mysqli_stmt_execute($stmt)) {
+              //on ferme la connexion
+              mysqli_close($connexion);
+              //on redirige vers la page d'accueil
+              header('Location: ../home.php');
+            } else {
+              header('Location: ../add-task.php?error=Erreur d\'enregistrement avec image');
+              exit();
+            }
+          } else {
+            header('Location: ../add-task.php?error=Erreur de requete avec image');
             exit();
           }
         }
       }
+    } else {
+      //on n'a pas upload d'image donc pas de traitement
+      //on crée la requete
+      $query = "INSERT INTO `task`(title, description, deadline, user_id, created_at) VALUES (?, ?, ?, ?,?)";
+      //on prépare la requete
+      if ($stmt = mysqli_prepare($connexion, $query)) { // mysqli prepare prend la connexion et la requete et la stocke dans stmt (stmt = statement = requete)
+        //on bind les paramètres // bind = lier
+        mysqli_stmt_bind_param(
+          $stmt, // variable de la requete
+          "ssiii",
+          $title,
+          $description,
+          $deadline,
+          $user_id,
+          $created_at
+        );
 
-      }else{//on a pas upload d'img Pas de traitement d'image
+        //on execute la requete
+        if (mysqli_stmt_execute($stmt)) {
+          //on ferme la connexion
+          mysqli_close($connexion);
+          //on redirige vers la page d'accueil
+          header('Location: ../home.php');
+        } else {
 
-        //on créer la requête
-        $query = "INSERT INTO `task` (title, description, deadline, user_id) VALUES (?, ?, ?, ?)";
-        //on prépare la requête
-        if($stmt = mysqli_prepare($connexion,$query)){
-          //on bind les paramètres
-          mysqli_stmt_bind_param($stmt, "ssii", $title, $description, $deadline, $user_id);
-          // on execute la requête
-          if(mysqli_stmt_execute($stmt)){
-            // on ferme la connexion
-            mysqli_stmt_close($connexion);
-            header('Location: ../home.php?success=Votre tâche a été ajoutée avec succès');
-            exit();
-          }else{
-            header('Location: ../add-task.php?error=Erreur de requête');
-            exit();
-          } 
-        
-        }else{
-          header('Location: ../add-task.php?error=Erreur de requête sans image');
+          header('Location: ../add-task.php?error=Erreur d\'enregistrement sans image');
           exit();
         }
+      } else {
+
+        header('Location: ../add-task.php?error=Erreur de requete sans image');
+        exit();
       }
-
     }
- 
-  }else{
-    var_dump('erreur de données de formulaire');
+  }
+} else {
+  var_dump('Erreur de données formulaire');
 }
-
